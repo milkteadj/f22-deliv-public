@@ -54,6 +54,7 @@ export default function EntryModal({ entry, type, user }) {
 
    const handleAdd = () => {
       const newEntry = {
+         date: new Date().toLocaleString(),
          name: name,
          link: link,
          description: description,
@@ -92,9 +93,13 @@ export default function EntryModal({ entry, type, user }) {
       type === "edit" ? <IconButton onClick={handleClickOpen}>
          <OpenInNewIcon />
       </IconButton>
-         : type === "add" ? <Button variant="contained" onClick={handleClickOpen}>
-            Add entry
-         </Button>
+         : type === "add" ? 
+         <>
+            <Button variant="contained" onClick={handleClickOpen}>
+               Add entry
+            </Button>&emsp;
+            <input type="text" placeholder="search..." className="search" /> 
+         </>
             : null;
 
    const actionButtons =

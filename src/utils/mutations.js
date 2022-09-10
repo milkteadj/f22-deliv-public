@@ -21,6 +21,7 @@ export async function addEntry(entry) {
       // The ID of the current user is logged with the new entry for database user-access functionality.
       // You should not remove this userid property, otherwise your logged entries will not display.
       userid: entry.userid,
+      date: entry.date,
    });
 }
 
