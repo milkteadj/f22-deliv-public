@@ -13,7 +13,7 @@ import TextField from '@mui/material/TextField';
 import * as React from 'react';
 import { useState } from 'react';
 import { categories } from '../utils/categories';
-import { addEntry } from '../utils/mutations';
+import { addEntry, updateEntry, deleteEntry } from '../utils/mutations';
 
 // Modal component for individual entries.
 
@@ -61,14 +61,28 @@ export default function EntryModal({ entry, type, user }) {
          category: category,
          userid: user?.uid,
       };
-
       addEntry(newEntry).catch(console.error);
       handleClose();
    };
 
    // TODO: Add Edit Mutation Handler
+   const handleEdit = id => {
+      const editedEntry = {
+         name: name,
+         link: link,
+         description: description,
+         user: user?.displayName,
+         category: category,
+      };
+      updateEntry(id, editedEntry).catch(console.error);
+      handleClose();
+   };
 
    // TODO: Add Delete Mutation Handler
+   const handleDelete = id => {
+      deleteEntry(id).catch(console.error);
+      handleClose();
+   }
 
    // Button handlers for modal opening and inside-modal actions.
    // These buttons are displayed conditionally based on if adding or editing/opening.
@@ -85,9 +99,13 @@ export default function EntryModal({ entry, type, user }) {
 
    const actionButtons =
       type === "edit" ?
-         <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-         </DialogActions>
+         <div display="flex" flex-direction="row" position="relative" text-align="center" width="500px">
+            <DialogActions>
+               <Button variant="outlined" color="error" onClick={() => {handleDelete(entry.id);}}>Delete</Button>&emsp;
+               <Button onClick={handleClose}>Cancel</Button>&emsp;
+               <Button variant="contained" onClick={() => {handleEdit(entry.id);}}>Edit</Button>&emsp;
+            </DialogActions>
+         </div>
          : type === "add" ?
             <DialogActions>
                <Button onClick={handleClose}>Cancel</Button>
