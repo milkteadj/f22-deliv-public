@@ -98,7 +98,6 @@ export default function EntryModal({ entry, type, user }) {
             <Button variant="contained" onClick={handleClickOpen}>
                Add entry
             </Button>&emsp;
-            <input type="text" placeholder="search..." className="search" /> 
          </>
             : null;
 

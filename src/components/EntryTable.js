@@ -8,11 +8,40 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import EntryModal from './EntryModal';
 import { getCategory } from '../utils/categories';
+import { useState } from 'react';
+import SearchIcon from '@mui/icons-material/Search';
 
 // Table component that displays entries on home screen
 
 export default function EntryTable({ entries }) {
+
+   // Add query search bar
+   const [query, setQuery] = useState("");
+
+   const totalCount = entries.length;
+   var filteredCount = entries.length;
+
+   const ifQueried = (entry) => {
+      return (
+         entry.user.toLowerCase().includes(query.toLowerCase()) ||
+         entry.link.toLowerCase().includes(query.toLowerCase()) ||
+         getCategory(entry.category).name.toLowerCase().includes(query.toLowerCase()) ||
+         entry.date.toLowerCase().includes(query.toLowerCase())
+      );
+   }
+
+   const searchContent = (entries) => {
+      const filteredEntries = entries.filter(ifQueried);
+      filteredCount = filteredEntries.length;
+      return filteredEntries;
+   }
+
    return (
+      <>
+      <div style={{margin:"auto", textAlign:"center", marginBottom:"20px"}}>
+         <input type="text" placeholder={SearchIcon} className="search" onChange={e => setQuery(e.target.value)}
+                style={{width: "40%", height: "30px"}}/>    
+      </div>
       <TableContainer component={Paper}>
          <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -22,11 +51,13 @@ export default function EntryTable({ entries }) {
                   <TableCell align="right">User</TableCell>
                   <TableCell align="right">Category</TableCell>
                   <TableCell align="right">Open</TableCell>
-                  <TableCell align="right">Date Posted</TableCell>
+                  <TableCell align="right">Date/Time Posted</TableCell>
                </TableRow>
             </TableHead>
             <TableBody>
-               {entries.map((entry) => (
+               {
+               searchContent(entries)
+               .map((entry) => (
                   <TableRow
                      key={entry.id}
                      sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -46,5 +77,9 @@ export default function EntryTable({ entries }) {
             </TableBody>
          </Table>
       </TableContainer>
+      <div style={{textAlign:"center", color:"gray", paddingTop: "20px"}}>
+         <i>{filteredCount} out of {totalCount} entries found.</i>
+      </div>
+   </>
    );
 }
