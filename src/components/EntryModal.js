@@ -15,6 +15,9 @@ import { useState } from 'react';
 import { categories } from '../utils/categories';
 import { addEntry, updateEntry, deleteEntry } from '../utils/mutations';
 
+import QRCode from 'qrcode';
+import { textAlign } from '@mui/system';
+
 // Modal component for individual entries.
 
 /* EntryModal parameters:
@@ -36,6 +39,15 @@ export default function EntryModal({ entry, type, user }) {
    const [description, setDescription] = useState(entry.description);
    const [category, setCategory] = React.useState(entry.category);
 
+   const [qrcode, setQrcode] = useState();
+
+   // QR Code
+   const generateQRCode = () => {
+      QRCode.toDataURL(link).then((data) => {
+         setQrcode(data);
+      })
+   }
+
    // Modal visibility handlers
 
    const handleClickOpen = () => {
@@ -48,6 +60,7 @@ export default function EntryModal({ entry, type, user }) {
 
    const handleClose = () => {
       setOpen(false);
+      setQrcode(null);
    };
 
    // Mutation handlers
@@ -106,8 +119,11 @@ export default function EntryModal({ entry, type, user }) {
          <div display="flex" flex-direction="row" position="relative" text-align="center" width="500px">
             <DialogActions>
                <Button variant="outlined" color="error" onClick={() => {handleDelete(entry.id);}}>Delete</Button>&emsp;
-               <Button onClick={handleClose}>Cancel</Button>&emsp;
-               <Button variant="contained" onClick={() => {handleEdit(entry.id);}}>Edit</Button>&emsp;
+               <Button variant="contained" onClick={() => {handleEdit(entry.id);}}>Edit</Button>
+               <Button variant="contained" color="secondary" onClick={() => generateQRCode()}>
+                  QR Code
+               </Button>
+               <Button onClick={handleClose}>Cancel</Button>
             </DialogActions>
          </div>
          : type === "add" ?
@@ -143,6 +159,22 @@ export default function EntryModal({ entry, type, user }) {
                   value={link}
                   onChange={(event) => setLink(event.target.value)}
                />
+               
+               {qrcode ? 
+                  <div style={{textAlign:"center"}}>
+                     <div>
+                        <img src={qrcode} />
+                     </div> 
+                     <a href={qrcode} download="qrcode.png" 
+                        style={{textDecoration: "none"}}>
+                        <Button variant="outlined">
+                           Download
+                        </Button>
+                     </a>
+                  </div>
+                  : null
+               }
+
                <TextField
                   margin="normal"
                   id="description"
